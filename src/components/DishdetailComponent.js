@@ -11,30 +11,31 @@ import {
 	Modal,
 	ModalHeader,
 	ModalBody,
-	Label
+	Label,
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { Control, LocalForm, Errors } from "react-redux-form";
 import { Loading } from "../components/LoadingComponent";
 import { baseUrl } from "../shared/baseUrl";
+import { FadeTransform, Fade, Stagger } from "react-animation-components";
 
-const required = val => val && val.length;
-const maxLength = len => val => !val || val.length <= len;
-const minLength = len => val => val && val.length >= len;
+const required = (val) => val && val.length;
+const maxLength = (len) => (val) => !val || val.length <= len;
+const minLength = (len) => (val) => val && val.length >= len;
 
 class CommentForm extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			isCommentModalOpen: false
+			isCommentModalOpen: false,
 		};
 		this.toggleCommentModal = this.toggleCommentModal.bind(this);
 	}
 
 	toggleCommentModal() {
 		this.setState({
-			isCommentModalOpen: !this.state.isCommentModalOpen
+			isCommentModalOpen: !this.state.isCommentModalOpen,
 		});
 	}
 
@@ -64,7 +65,7 @@ class CommentForm extends Component {
 					</ModalHeader>
 					<ModalBody>
 						<LocalForm
-							onSubmit={values => this.handleSubmit(values)}
+							onSubmit={(values) => this.handleSubmit(values)}
 						>
 							<div className="form-group">
 								<Label htmlFor="rating">Rating</Label>
@@ -91,7 +92,7 @@ class CommentForm extends Component {
 									validators={{
 										required,
 										minLength: minLength(2),
-										maxLength: maxLength(15)
+										maxLength: maxLength(15),
 									}}
 								/>
 								<Errors
@@ -103,7 +104,7 @@ class CommentForm extends Component {
 										minLength:
 											"Must be greater than 2 character",
 										maxLength:
-											"Must be 15 characters or less"
+											"Must be 15 characters or less",
 									}}
 								/>
 							</div>
@@ -132,30 +133,45 @@ class CommentForm extends Component {
 
 function RenderDish({ dish }) {
 	return (
-		<Card key={dish.id}>
-			<CardImg width="100%" src={baseUrl + dish.image} alt={dish.name} />
-			<CardBody>
-				<CardTitle>{dish.name}</CardTitle>
-				<CardText>{dish.description}</CardText>
-			</CardBody>
-		</Card>
+		<FadeTransform
+			in
+			transformProps={{
+				exitTransform: "scale(0.5) translateY(-50%)",
+			}}
+		>
+			<Card key={dish.id}>
+				<CardImg
+					width="100%"
+					src={baseUrl + dish.image}
+					alt={dish.name}
+				/>
+				<CardBody>
+					<CardTitle>{dish.name}</CardTitle>
+					<CardText>{dish.description}</CardText>
+				</CardBody>
+			</Card>
+		</FadeTransform>
 	);
 }
 
 function RenderComments({ comments, postComment, dishId }) {
 	if (comments != null) {
-		const comment = comments.map(comment => {
+		const comment = comments.map((comment) => {
 			return (
 				<ul key={comment.id} className="list-unstyled">
-					<li>{comment.comment}</li>
-					<li>
-						-- {comment.author}, {}
-						{new Intl.DateTimeFormat("en-US", {
-							year: "numeric",
-							month: "short",
-							day: "2-digit"
-						}).format(new Date(Date.parse(comment.date)))}
-					</li>
+					<Stagger in>
+						<Fade in>
+							<li>{comment.comment}</li>
+							<li>
+								-- {comment.author}, {}
+								{new Intl.DateTimeFormat("en-US", {
+									year: "numeric",
+									month: "short",
+									day: "2-digit",
+								}).format(new Date(Date.parse(comment.date)))}
+							</li>
+						</Fade>
+					</Stagger>
 				</ul>
 			);
 		});
@@ -172,7 +188,7 @@ function RenderComments({ comments, postComment, dishId }) {
 	}
 }
 
-const DishDetail = props => {
+const DishDetail = (props) => {
 	if (props.isLoading) {
 		return (
 			<div className="container">
