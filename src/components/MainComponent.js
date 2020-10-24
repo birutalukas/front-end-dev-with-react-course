@@ -13,6 +13,8 @@ import {
 	fetchDishes,
 	fetchComments,
 	fetchPromos,
+	fetchLeaders,
+	postFeedback,
 } from "../redux/ActionCreators";
 import { actions } from "react-redux-form";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
@@ -27,6 +29,28 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
+	postFeedback: (
+		firstname,
+		lastname,
+		telnum,
+		email,
+		agree,
+		contactType,
+		message,
+		date
+	) =>
+		dispatch(
+			postFeedback(
+				firstname,
+				lastname,
+				telnum,
+				email,
+				agree,
+				contactType,
+				message,
+				date
+			)
+		),
 	postComment: (dishId, rating, author, comment) =>
 		dispatch(postComment(dishId, rating, author, comment)),
 	fetchDishes: () => {
@@ -41,6 +65,9 @@ const mapDispatchToProps = (dispatch) => ({
 	fetchPromos: () => {
 		dispatch(fetchPromos());
 	},
+	fetchLeaders: () => {
+		dispatch(fetchLeaders());
+	},
 });
 
 class Main extends Component {
@@ -48,6 +75,7 @@ class Main extends Component {
 		this.props.fetchDishes();
 		this.props.fetchComments();
 		this.props.fetchPromos();
+		this.props.fetchLeaders();
 	}
 
 	render() {
@@ -69,10 +97,13 @@ class Main extends Component {
 					promosLoading={this.props.promotions.isLoading}
 					promosErrMess={this.props.promotions.errMess}
 					leader={
-						this.props.leaders.filter(
+						this.props.leaders.leaders.filter(
 							(leader) => leader.featured
 						)[0]
 					}
+					leadersLoading={this.props.leaders.isLoading}
+					leadersErrMess={this.props.leaders.errMess}
+					postFeedback={this.props.postFeedback}
 				/>
 			);
 		};
@@ -93,7 +124,6 @@ class Main extends Component {
 							comment.dishId === parseInt(match.params.dishId, 10)
 					)}
 					commentsErrMess={this.props.comments.errMess}
-					postComment={this.props.postComment}
 				/>
 			);
 		};
@@ -135,6 +165,8 @@ class Main extends Component {
 										resetFeedbackForm={
 											this.props.resetFeedbackForm
 										}
+										postFeedback={this.props.postFeedback}
+										postComment={this.props.postComment}
 									/>
 								)}
 							/>

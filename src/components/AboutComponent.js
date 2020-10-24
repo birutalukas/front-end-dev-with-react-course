@@ -5,15 +5,17 @@ import {
 	Card,
 	CardBody,
 	CardHeader,
-	Media
+	Media,
 } from "reactstrap";
 import { Link } from "react-router-dom";
+import { Loading } from "./LoadingComponent";
+import { baseUrl } from "../shared/baseUrl";
 
 function RenderLeader({ leader }) {
 	return (
-		<Media className="mt-4">
+		<Media key={leader.id} className="mt-4">
 			<Media left className="mr-4">
-				<img src={leader.image} alt={leader.name} />
+				<img src={baseUrl + leader.image} alt={leader.name} />
 			</Media>
 			<Media body className="ml-4">
 				<Media heading>{leader.name}</Media>
@@ -24,8 +26,8 @@ function RenderLeader({ leader }) {
 	);
 }
 
-const About = props => {
-	const leaders = props.leaders.map(leader => {
+const About = (props) => {
+	const leaders = props.leaders.leaders.map((leader) => {
 		return <RenderLeader leader={leader} />;
 	});
 
@@ -107,7 +109,13 @@ const About = props => {
 					<h2>Corporate Leadership</h2>
 				</div>
 				<div className="col-12">
-					<Media list>{leaders}</Media>
+					{props.leaders.isLoading ? (
+						<Loading />
+					) : props.leaders.errMess ? (
+						<h4>{props.leaders.errMess} </h4>
+					) : (
+						<Media list>{leaders}</Media>
+					)}
 				</div>
 			</div>
 		</div>
