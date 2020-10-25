@@ -166,7 +166,6 @@ class Main extends Component {
 											this.props.resetFeedbackForm
 										}
 										postFeedback={this.props.postFeedback}
-										postComment={this.props.postComment}
 									/>
 								)}
 							/>
